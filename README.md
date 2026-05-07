@@ -1,7 +1,15 @@
 # antigravity-48bit-workaround
 Bash scripts to run the Google Antigravity IDE language server on an ARM kernel with 39 bits of address space
 
-Google's Antigravity IDE has this problem where the ARM64 language server is compiled for Google's internal server OS, which uses 48 bits of address space, instead of the more common 39 bits on comsumer devices. We can fix this in one of two ways:
+Google's Antigravity IDE has this problem where the ARM64 language server is compiled for Google's internal server OS, which uses 48 bits of address space, instead of the more common 39 bits on consumer devices.
+If you know where to look, you would see these error messages:
+```
+third_party/tcmalloc/internal/system_allocator.h:589] MmapAligned() failed - unable to allocate with tag (hint=0x2e6680000000, size=1073741824, alignment=1073741824) - is something limiting address placement?
+third_party/tcmalloc/internal/system_allocator.h:596] Note: the allocation may have failed because TCMalloc assumes a 48-bit virtual address space size; you may need to rebuild TCMalloc with TCMALLOC_ADDRESS_BITS defined to your system's virtual address space size
+third_party/tcmalloc/arena.cc:60] CHECK in Alloc: FATAL ERROR: Out of memory trying to allocate internal tcmalloc data (bytes=131072, object-size=16384); is something preventing mmap from succeeding (sandbox, VSS limitations)?
+```
+
+We can fix this in one of two ways:
 
 1. Recompile the host kernel to use 48 bits of address space
 2. Run just the language server inside a QEMU virtual machine with a 48bit kernel, and painstakingly route all communications between the Antigravity IDE and the language server process running inside the VM.
@@ -49,7 +57,6 @@ error() { #red text and exit 1
 }
 
 status() { #cyan text to indicate what is happening
-  
   #detect if a flag was passed, and if so, pass it on to the echo command
   if [[ "$1" == '-'* ]] && [ ! -z "$2" ];then
     echo -e $1 "\e[96m$2\e[0m" 1>&2
