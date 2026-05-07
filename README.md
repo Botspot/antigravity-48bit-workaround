@@ -2,7 +2,7 @@
 # antigravity-48bit-workaround
 Bash scripts to run the Google Antigravity IDE language server on an ARM kernel with 39 bits of address space
 
-Google's Antigravity IDE has this problem where the ARM64 language server is compiled for Google's internal server OS, which uses 48 bits of address space, instead of the more common 39 bits on consumer devices.
+Google's Antigravity IDE has this problem where the ARM64 language server is compiled for enterprise servers and newer ARM CPUs, which use 48 bits of address space, instead of 39 bits which is more common on consumer devices.
 If you know where to look, you would see these error messages:
 ```
 third_party/tcmalloc/internal/system_allocator.h:589] MmapAligned() failed - unable to allocate with tag (hint=0x2e6680000000, size=1073741824, alignment=1073741824) - is something limiting address placement?
@@ -10,11 +10,11 @@ third_party/tcmalloc/internal/system_allocator.h:596] Note: the allocation may h
 third_party/tcmalloc/arena.cc:60] CHECK in Alloc: FATAL ERROR: Out of memory trying to allocate internal tcmalloc data (bytes=131072, object-size=16384); is something preventing mmap from succeeding (sandbox, VSS limitations)?
 ```
 
-We can fix this in one of two ways:
+There are 3 solutions to this:
 
 1. Recompile the host kernel to use 48 bits of address space
 2. Use a device and OS which already has a compatible kernel (Raspberry Pi 5 with the 16k page size kernel)
-3. Emulate only the language server inside a QEMU virtual machine with a 48bit kernel, and painstakingly route all communications between the Antigravity IDE and the language server process running inside the VM.
+3. Emulate the language server binary under a 48bit kernel, using a QEMU virtual machine, and painstakingly route all communications between the Antigravity IDE and the language server process running inside the VM.
 
 **This repo accomplishes option 3.**  
 An Antigravity update has already [broken](https://github.com/Botspot/pi-apps/issues/2952) the implementation once. This is a partial rewrite, which I'm hoping will continue working for longer. I've moved the code here, and out of [the Pi-apps Antigravity install script](https://github.com/Botspot/pi-apps/blob/master/apps/Antigravity/install-64), to make it easier for others to inspect the code and hopefully help keep this working into the future.
