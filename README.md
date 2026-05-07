@@ -9,6 +9,7 @@ third_party/tcmalloc/internal/system_allocator.h:589] MmapAligned() failed - una
 third_party/tcmalloc/internal/system_allocator.h:596] Note: the allocation may have failed because TCMalloc assumes a 48-bit virtual address space size; you may need to rebuild TCMalloc with TCMALLOC_ADDRESS_BITS defined to your system's virtual address space size
 third_party/tcmalloc/arena.cc:60] CHECK in Alloc: FATAL ERROR: Out of memory trying to allocate internal tcmalloc data (bytes=131072, object-size=16384); is something preventing mmap from succeeding (sandbox, VSS limitations)?
 ```
+While Antigravity itself would install and run fine, you can't use any of the AI features, which completely defeats the point.
 
 There are 3 solutions to this:
 
