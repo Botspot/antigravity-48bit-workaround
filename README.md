@@ -20,10 +20,10 @@ There are 3 solutions to this:
 **This repo accomplishes option 3.**  
 An Antigravity update has already [broken](https://github.com/Botspot/pi-apps/issues/2952) the implementation once. This is a partial rewrite, which I'm hoping will continue working for longer. I've moved the code here, and out of [the Pi-apps Antigravity install script](https://github.com/Botspot/pi-apps/blob/master/apps/Antigravity/install-64), to make it easier for others to inspect the code and hopefully help keep this working into the future.
 
-For whatever reason the language server communicates using stdin, stdout, a socket file, and numerous random network ports on localhost, as well as api endpoints on the open internet. On top of that, now it seems that *two* language server processes need to be running at once, and they both need to talk to the IDE simultaneously without any port conflicts. I'm not sure why this has to be so complicated, but it was a total nightmare to get everything talking correctly. In fact the only reason it works at all is because the language server allows disabling port number randomization with command-line flags.
+For whatever reason the language server communicates using stdin, stdout, a unix socket, multiple FIFOs in /tmp, and numerous random network ports on localhost, as well as api endpoints on the open internet. On top of that, now it seems that *two* language server processes need to be running at once, and they both need to talk to the IDE simultaneously without any port conflicts. I'm not sure why this has to be so complicated, but it was a total nightmare to get everything talking correctly. In fact the only reason it works at all is because the language server allows disabling port number randomization with command-line flags.
 
 ## Troubleshooting
-If you get an error in Antigravity saying that the language server crashed, or is not responding, check the logs here in this folder:
+If you get an error in Antigravity saying that the language server crashed or is not responding, check the logs here in this folder:
 ```
 ~/.cache/antigravity-48bit-workaround
 ```
@@ -31,7 +31,7 @@ If you get an error in Antigravity saying that the language server crashed, or i
 ## Get started
 
 It's recommended to simply install Antigravity from Pi-Apps, which will apply this workaround automatically. [![badge](https://github.com/Botspot/pi-apps/blob/master/icons/badge.png?raw=true)](https://github.com/Botspot/pi-apps)  
-If you don't want to do that for some reason, here's instructions for how to use the code here on this repo.
+If you don't want to do that for some reason, or don't use a debian-based OS, here's instructions for how to use the code here on this repo.
 
 Once you have Antigravity installed, install these dependenciees: `qemu-system-arm ipxe-qemu git bc bison flex libssl-dev make gcc libelf-dev socat`
 
