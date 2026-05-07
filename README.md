@@ -1,3 +1,4 @@
+<a href="https://github.com/Botspot/pi-apps"><img src="https://github.com/Botspot/pi-apps/blob/master/icons/badge.png?raw=true" align="right"/></a>
 # antigravity-48bit-workaround
 Bash scripts to run the Google Antigravity IDE language server on an ARM kernel with 39 bits of address space
 
@@ -20,6 +21,7 @@ An Antigravity update has already [broken](https://github.com/Botspot/pi-apps/is
 For whatever reason the language server communicates using stdin, stdout, a socket file, and numerous random network ports on localhost, as well as api endpoints on the open internet. On top of that, now it seems *two* language server processes have to be running at once and they both need to talk to the IDE simultaneously without any port conflicts. I'm not sure why this needs to be so complicated. Isn't it just taking your prompts and sending them to Google, and then retrieving the LLM's response back? No matter the reason, this was a total nightmare to get everything talking correctly. In fact the only reason it works at all is because the language server supports the option to hardcode port numbers, but as it's not the default behavior, this script injects its own command-line flags partway through thhe wrapper process.
 
 ##Get started
+
 Once you have Antigravity installed, install these dependenciees: `qemu-system-arm ipxe-qemu git bc bison flex libssl-dev make gcc libelf-dev socat`
 
 Then run these commands:
@@ -46,7 +48,7 @@ rm -rf /tmp/antigravity-48bit-workaround
 sudo ln -sf /usr/share/antigravity/resources/antigravity-48bit-workaround/language-server-wrapper.sh /usr/share/antigravity/resources/app/extensions/antigravity/bin/language_server_linux_arm
 
 ```
-
+Or, simply just install Antigravity from Pi-Apps, which will apply this workaround automatically. [![badge](https://github.com/Botspot/pi-apps/blob/master/icons/badge.png?raw=true)](https://github.com/Botspot/pi-apps)
 
 NOTE: this repo includes a precompiled 48bit ARM64 kernel to run inside the VM. If you need to recompile the kernel for whatever reason, here's the commands I used to make it:
 ```bash
