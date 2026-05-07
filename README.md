@@ -13,19 +13,28 @@ third_party/tcmalloc/arena.cc:60] CHECK in Alloc: FATAL ERROR: Out of memory try
 We can fix this in one of two ways:
 
 1. Recompile the host kernel to use 48 bits of address space
-2. Run just the language server inside a QEMU virtual machine with a 48bit kernel, and painstakingly route all communications between the Antigravity IDE and the language server process running inside the VM.
+2. Use a device and OS which already has a compatible kernel (Raspberry Pi 5 with the 16k page size kernel)
+3. Emulate only the language server inside a QEMU virtual machine with a 48bit kernel, and painstakingly route all communications between the Antigravity IDE and the language server process running inside the VM.
 
-This repo accomplishes option 2.  
-An Antigravity update has already [broken](https://github.com/Botspot/pi-apps/issues/2952) the implementation once. This is a partial rewrite, which I'm hoping will continue working longer. I've moved the code here, and out of [the Pi-apps Antigravity install script](https://github.com/Botspot/pi-apps/blob/master/apps/Antigravity/install-64), so that it's easier for others to inspect the code and hopefully help keep it working into the future.
+**This repo accomplishes option 3.**  
+An Antigravity update has already [broken](https://github.com/Botspot/pi-apps/issues/2952) the implementation once. This is a partial rewrite, which I'm hoping will continue working for longer. I've moved the code here, and out of [the Pi-apps Antigravity install script](https://github.com/Botspot/pi-apps/blob/master/apps/Antigravity/install-64), to make it easier for others to inspect the code and hopefully help keep this working into the future.
 
-For whatever reason the language server communicates using stdin, stdout, a socket file, and numerous random network ports on localhost, as well as api endpoints on the open internet. On top of that, now it seems *two* language server processes have to be running at once and they both need to talk to the IDE simultaneously without any port conflicts. I'm not sure why this needs to be so complicated. Isn't it just taking your prompts and sending them to Google, and then retrieving the LLM's response back? No matter the reason, this was a total nightmare to get everything talking correctly. In fact the only reason it works at all is because the language server supports the option to hardcode port numbers, but as it's not the default behavior, this script injects its own command-line flags partway through thhe wrapper process.
+For whatever reason the language server communicates using stdin, stdout, a socket file, and numerous random network ports on localhost, as well as api endpoints on the open internet. On top of that, now it seems that *two* language server processes need to be running at once, and they both need to talk to the IDE simultaneously without any port conflicts. I'm not sure why this has to be so complicated, but it was a total nightmare to get everything talking correctly. In fact the only reason it works at all is because the language server allows disabling port number randomization with command-line flags.
 
-##Get started
+## Troubleshooting
+If you get an error in Antigravity saying that the language server crashed, or is not responding, check the logs here in this folder:
+```
+~/.cache/antigravity-48bit-workaround
+```
+
+## Get started
+
+It's recommended to simply install Antigravity from Pi-Apps, which will apply this workaround automatically. [![badge](https://github.com/Botspot/pi-apps/blob/master/icons/badge.png?raw=true)](https://github.com/Botspot/pi-apps)  
+If you don't want to do that for some reason, here's instructions for how to use the code here on this repo.
 
 Once you have Antigravity installed, install these dependenciees: `qemu-system-arm ipxe-qemu git bc bison flex libssl-dev make gcc libelf-dev socat`
 
 Then run these commands:
-
 ```bash
 #setup main folder to host the kernel and wrapper files
 sudo mkdir -p /usr/share/antigravity/resources/antigravity-48bit-workaround
@@ -48,7 +57,6 @@ rm -rf /tmp/antigravity-48bit-workaround
 sudo ln -sf /usr/share/antigravity/resources/antigravity-48bit-workaround/language-server-wrapper.sh /usr/share/antigravity/resources/app/extensions/antigravity/bin/language_server_linux_arm
 
 ```
-Or, simply just install Antigravity from Pi-Apps, which will apply this workaround automatically. [![badge](https://github.com/Botspot/pi-apps/blob/master/icons/badge.png?raw=true)](https://github.com/Botspot/pi-apps)
 
 NOTE: this repo includes a precompiled 48bit ARM64 kernel to run inside the VM. If you need to recompile the kernel for whatever reason, here's the commands I used to make it:
 ```bash
